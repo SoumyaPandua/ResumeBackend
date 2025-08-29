@@ -16,6 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return JSONResponse(content={"message": "Welcome to the Resume Parser API"}, status_code=200)
+
+@app.get("/health")
+async def health_check():
+    return JSONResponse(content={"status": "healthy"}, status_code=200)
+
 @app.post("/run-pipeline")
 async def trigger_pipeline_from_uploads(
     jd: UploadFile = File(...),
