@@ -4,14 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
 from main import main as run_pipeline
-# import sys
-# sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3001"],
+    allow_origins=["https://resume-frontend-git-main-axyz10649ram-gmailcoms-projects.vercel.app/"],  # you can also allow "*" for Render testing
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -20,7 +18,7 @@ app.add_middleware(
 @app.post("/run-pipeline")
 async def trigger_pipeline_from_uploads(
     jd: UploadFile = File(...),
-    resumes: list[UploadFile] = File(...)
+    resumes: list[UploadFile] = File(...),
 ):
     try:
         temp_dir = tempfile.mkdtemp()
@@ -40,9 +38,15 @@ async def trigger_pipeline_from_uploads(
                 f.write(await resume.read())
 
         results = run_pipeline(resume_folder, jd_folder)
-
         return JSONResponse(content={"status": "success", "results": results}, status_code=200)
 
     except Exception as e:
         print("[ERROR] Pipeline failed:", e)
         return JSONResponse(content={"status": "error", "message": str(e)}, status_code=500)
+
+
+# 👇 Add this block so Render knows how to start
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))  # Render sets $PORT
+    uvicorn.run("api:app", host="0.0.0.0", port=port, reload=False)
