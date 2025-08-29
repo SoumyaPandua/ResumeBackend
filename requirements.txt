@@ -9,4 +9,3 @@ fastapi
 python-multipart
 python-dotenv
 uvicorn
-mangum
