@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
 from api import main as run_pipeline
+from mangum import Mangum
 
 app = FastAPI()
 
@@ -53,8 +54,9 @@ async def trigger_pipeline_from_uploads(
         print("[ERROR] Pipeline failed:", e)
         return JSONResponse(content={"status": "error", "message": str(e)}, status_code=500)
 
+handler = Mangum(app)
 
-# 👇 Add this block so Render knows how to start
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))  # Render sets $PORT
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
+# # 👇 Add this block so Render knows how to start
+# if __name__ == "__main__":
+#     port = int(os.environ.get("PORT", 8000))  # Render sets $PORT
+#     uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
