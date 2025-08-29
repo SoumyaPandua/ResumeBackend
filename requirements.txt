@@ -8,3 +8,4 @@ pdfplumber
 fastapi
 python-multipart
 python-dotenv
+uvicorn
